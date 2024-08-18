@@ -21,7 +21,7 @@ function readJSONFile(filePath) {
     if (error instanceof SyntaxError) {
       console.error('Invalid JSON file format');
     } else {
-      console.error(error.message);
+      console.error('Error:', error.message);
     }
   }
 }
@@ -35,9 +35,13 @@ const files = [
 
 // Read and handle each file
 files.forEach(file => {
-  if (fs.existsSync(file)) {
-    readJSONFile(file);
-  } else {
-    console.error(`File not found: ${file}`);
+  try {
+    if (fs.existsSync(file)) {
+      readJSONFile(file);
+    } else {
+      console.error(`File not found: ${file}`);
+    }
+  } catch (error) {
+    console.error('Error during file processing:', error.message);
   }
 });
