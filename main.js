@@ -1,41 +1,49 @@
-const fs = require('fs');
-const path = require('path');
-
-// Function to read and parse JSON file
-function readJSONFile(filePath) {
-  if (!filePath) {
-    console.error('File path is undefined');
-    return;
-  }
-
+// Sample function to read and process JSON data
+function processJSON(jsonData) {
   try {
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const data = JSON.parse(fileContent);
-
-    // Check for missing required data
-    if (!data.name || data.age === undefined) {
-      console.error('Missing required data');
-      return;
+    // Test Case 1: Valid JSON file
+    const data = JSON.parse(jsonData);
+    
+    // Check for missing required fields (Test Case 3)
+    if (!data.name || !data.id || !data.value) {
+      throw new Error("Missing required data fields in JSON file.");
     }
 
-    console.log('Data:', data);
+    // Process and display the valid data
+    console.log("Data processed successfully:", data);
   } catch (error) {
+    // Test Case 2: Handling invalid JSON format
     if (error instanceof SyntaxError) {
-      console.error('Invalid JSON file format');
-    } else if (error.code === 'ENOENT') {
-      console.error(`File not found: ${filePath}`);
+      console.error("Invalid JSON format:", error.message);
     } else {
-      console.error('Error:', error.message);
+      // Test Case 3: Missing required fields
+      console.error(error.message);
     }
   }
 }
 
-// Paths to your JSON files
-const files = [
-  path.join(__dirname, 'invalid.json'),
-  path.join(__dirname, 'valid.json'),
-  path.join(__dirname, 'missingData.json'),
-];
+// Example usage:
 
-// Read and handle each file
-files.forEach(readJSONFile);
+// Valid JSON string (Test Case 1)
+const validJSON = `{
+  "name": "John Doe",
+  "id": 123,
+  "value": "Sample Data"
+}`;
+
+// Invalid JSON string (Test Case 2)
+const invalidJSON = `{
+  "name": "John Doe",
+  "id": 123
+  "value": "Sample Data"
+}`; // Missing comma after "id": 123
+
+// JSON with missing required fields (Test Case 3)
+const missingFieldsJSON = `{
+  "name": "John Doe"
+}`; // Missing "id" and "value" fields
+
+// Testing the different scenarios
+processJSON(validJSON); // Should process and display the data
+processJSON(invalidJSON); // Should catch and display a syntax error
+processJSON(missingFieldsJSON); // Should detect and display a missing fields error
